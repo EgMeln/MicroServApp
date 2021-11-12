@@ -8,7 +8,7 @@ import (
 )
 
 func Run() {
-	heroes := make([]Hero, 30)
+	heroes := make([]Hero, 32)
 	rand.Seed(time.Now().UnixNano())
 	CreateRandomHeroes32(&heroes)
 	c0 := make(chan Hero)
