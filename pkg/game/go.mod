@@ -1,3 +1,3 @@
-module github.com/EgMeln/MicroSercApp/pkg/game
+module github.com/EgMeln/MicroServApp/pkg/game
 
 go 1.17
