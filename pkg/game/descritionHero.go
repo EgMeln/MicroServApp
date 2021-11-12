@@ -1,4 +1,4 @@
-11package game
+package game
 
 import (
 	"fmt"
