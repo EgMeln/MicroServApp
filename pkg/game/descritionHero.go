@@ -16,6 +16,7 @@ type Hero interface {
 	amountStamina() int
 	amountDefense() int
 	getID() int
+	getName() string
 }
 
 type Warrior struct {
@@ -124,7 +125,9 @@ func (war *Warrior) setDefense(point int) {
 func (war *Warrior) getID() int {
 	return war.Id
 }
-
+func (war *Warrior) getName() string {
+	return war.Name
+}
 func (mag *Mage) Attack(hero Hero) {
 	mag.Mana += 3
 	var damage int
@@ -208,7 +211,9 @@ func (mag *Mage) setDefense(point int) {
 func (mag *Mage) getID() int {
 	return mag.Id
 }
-
+func (mag *Mage) getName() string {
+	return mag.Name
+}
 func (hun *Hunter) Attack(hero Hero) {
 	hun.Energy += 12
 	var damage int
@@ -289,4 +294,8 @@ func (hun *Hunter) setDefense(point int) {
 }
 func (hun *Hunter) getID() int {
 	return hun.Id
+}
+
+func (hun *Hunter) getName() string {
+	return hun.Name
 }
