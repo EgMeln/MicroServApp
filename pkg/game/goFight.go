@@ -3,12 +3,29 @@ package game
 import (
 	"fmt"
 	"math/rand"
+	"time"
 )
 
 func remove(s *[]Hero, i int) []Hero {
 	(*s)[i] = (*s)[len(*s)-1]
 	*s = (*s)[:len(*s)-1]
 	return *s
+}
+func Run() string {
+	heroes := make([]Hero, 32)
+	rand.Seed(time.Now().UnixNano())
+	CreateRandomHeroes32(&heroes)
+	c0 := make(chan Hero)
+	c1 := make(chan Hero)
+
+	for len(heroes) != 1 {
+		go ToFight(&heroes, c0, c1)
+		go MakeFight(&heroes, c0, c1)
+		time.Sleep(time.Millisecond)
+	}
+	fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
+	str := "IN THIS FIGHT, " + string(heroes[0].getName()) + " WON!!!"
+	return str
 }
 
 func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {

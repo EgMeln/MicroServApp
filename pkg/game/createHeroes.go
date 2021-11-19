@@ -1,26 +1,10 @@
 package game
 
 import (
-	"fmt"
 	"math/rand"
 	"strconv"
 	"time"
 )
-
-func Run() {
-	heroes := make([]Hero, 32)
-	rand.Seed(time.Now().UnixNano())
-	CreateRandomHeroes32(&heroes)
-	c0 := make(chan Hero)
-	c1 := make(chan Hero)
-
-	for len(heroes) != 1 {
-		go ToFight(&heroes, c0, c1)
-		go MakeFight(&heroes, c0, c1)
-		time.Sleep(time.Millisecond)
-	}
-	fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
-}
 
 func CreateRandomHeroes32(heroes *[]Hero) {
 	rand.Seed(time.Now().UnixNano())
