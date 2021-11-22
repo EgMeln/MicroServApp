@@ -15,13 +15,13 @@ func Run32() string {
 	var resultStr string
 	rand.Seed(time.Now().UnixNano())
 	CreateRandomHeroes32(&heroes)
+
 	c0 := make(chan Hero)
 	c1 := make(chan Hero)
 
 	for len(heroes) != 1 {
 		go ToFight(&heroes, c0, c1)
 		go MakeFight(&heroes, &resultStr, c0, c1)
-		time.Sleep(time.Millisecond)
 	}
 	//fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
 	resultStr = resultStr + "IN THIS FIGHT, " + string(heroes[0].getName()) + " WON!!!"
@@ -87,18 +87,22 @@ func MakeFight(heroes *[]Hero, resultStr *string, upstream, upstream2 chan Hero)
 			*resultStr = *resultStr + "This battle between " + string(v.getName()) + " and " + string(p.getName()) + "\n"
 			for {
 				if v.amountStamina() > 20 {
+					v.SecondSkill(p)
 					*resultStr = v.SecondSkill(p) + "\n"
 				} else if v.amountStamina() > 10 {
+					v.FirstSkill(p)
 					*resultStr = v.FirstSkill(p) + "\n"
 				} else {
 					choose := 1 + rand.Intn(2)
 					if choose == 1 {
 						//fmt.Println(v, "Attack")
 						*resultStr = *resultStr + string(v.getName()) + " Attack\n"
+						v.Attack(p)
 						*resultStr = v.Attack(p) + "\n"
 					} else {
 						//fmt.Println(v, "Defend")
 						*resultStr = *resultStr + string(v.getName()) + " Defend\n"
+						v.Defend()
 						*resultStr = v.Defend() + "\n"
 					}
 				}
@@ -111,18 +115,22 @@ func MakeFight(heroes *[]Hero, resultStr *string, upstream, upstream2 chan Hero)
 					return
 				}
 				if p.amountStamina() > 20 {
+					p.SecondSkill(v)
 					*resultStr = p.SecondSkill(v) + "\n"
 				} else if p.amountStamina() > 10 {
+					p.FirstSkill(v)
 					*resultStr = p.FirstSkill(v) + "\n"
 				} else {
 					choose := 1 + rand.Intn(2)
 					if choose == 1 {
 						//fmt.Println(p, "Attack")
 						*resultStr = *resultStr + string(p.getName()) + " Attack\n"
+						p.Attack(v)
 						*resultStr = p.Attack(v) + "\n"
 					} else {
 						//fmt.Println(p, "Defend")
 						*resultStr = *resultStr + string(p.getName()) + " Defend\n"
+						p.Defend()
 						*resultStr = p.Defend() + "\n"
 					}
 				}
