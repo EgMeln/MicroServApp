@@ -3,7 +3,7 @@ module github.com/EgMeln/MicroServApp
 go 1.17
 
 require (
-	github.com/EgMeln/MicroServApp/pkg/game v0.0.0-20211112214737-5c880060ee01
+	github.com/EgMeln/MicroServApp/pkg/game v0.0.0-20211119132907-cf62daa6e312
 	github.com/labstack/echo/v4 v4.6.1
 )
 
