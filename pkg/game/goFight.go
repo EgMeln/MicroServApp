@@ -63,16 +63,22 @@ func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
 	if len(*heroes) == 0 || len(*heroes) == 1 {
 		return
 	}
-
+	if len(*heroes) == 2 {
+		downstream <- (*heroes)[0]
+		downstream2 <- (*heroes)[1]
+		remove(heroes, 0)
+		remove(heroes, 1)
+		return
+	}
 	first := 0 + rand.Intn(len(*heroes))
-	if first <= len(*heroes) {
+	if first < len(*heroes) {
 		downstream <- (*heroes)[first]
 		remove(heroes, first)
 	} else {
 		return
 	}
 	second := 0 + rand.Intn(len(*heroes))
-	if second <= len(*heroes) {
+	if second < len(*heroes) {
 		downstream2 <- (*heroes)[second]
 		remove(heroes, second)
 	} else {
