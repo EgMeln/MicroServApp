@@ -1,15 +1,15 @@
 package game
 
 import (
-	"fmt"
 	"math/rand"
+	"strconv"
 )
 
 type Hero interface {
-	Attack(hero Hero)
-	Defend()
-	FirstSkill(hero Hero)
-	SecondSkill(hero Hero)
+	Attack(hero Hero) string
+	Defend() string
+	FirstSkill(hero Hero) string
+	SecondSkill(hero Hero) string
 	Health() int
 	setHealth(int)
 	setDefense(int)
@@ -44,7 +44,7 @@ type Hunter struct {
 	Energy  int
 }
 
-func (war *Warrior) Attack(hero Hero) {
+func (war *Warrior) Attack(hero Hero) string {
 	war.Rage += 10
 	var damage int
 	if war.Power+(10+rand.Intn(11))-hero.amountDefense() <= 0 {
@@ -56,18 +56,23 @@ func (war *Warrior) Attack(hero Hero) {
 		hero.setHealth(damage)
 		hero.setDefense(damage)
 	}
-	fmt.Println("You have dealt ", damage, " damage")
+	//fmt.Println("You have dealt ", damage, " damage")
+	return "You have dealt " + strconv.Itoa(damage) + " damage"
 }
-func (war *Warrior) Defend() {
+func (war *Warrior) Defend() string {
+	var defense int
 	war.Rage += 5
-	war.Defense = war.Defense + (8 + rand.Intn(9))
+	defense = 8 + rand.Intn(9)
+	war.Defense = war.Defense + defense
+	return "Your protection has been increased by" + strconv.Itoa(defense)
 }
-func (war *Warrior) FirstSkill(hero Hero) {
+func (war *Warrior) FirstSkill(hero Hero) string {
+	var str string
 	if war.Rage < 10 {
-		fmt.Println("You're not angry enough! Be angrier!!!Arrrrrr")
-		return
+		//fmt.Println("You're not angry enough! Be angrier!!!Arrrrrr")
+		return "You're not angry enough! Be angrier!!!Arrrrrr"
 	}
-	fmt.Println("YOU want to be like your hero Dovakin, so you scream at the enemy. You're stunning him!")
+	str = "YOU want to be like your hero Dovakin, so you scream at the enemy. You're stunning him! "
 	war.Power += 1
 	war.Rage -= 10
 	var damage int
@@ -80,14 +85,15 @@ func (war *Warrior) FirstSkill(hero Hero) {
 		hero.setHealth(damage)
 		hero.setDefense(damage)
 	}
-	fmt.Println("You have dealt ", damage, " damage")
+	str += "You have dealt " + strconv.Itoa(damage) + " damage"
+	return str
 }
-func (war *Warrior) SecondSkill(hero Hero) {
+func (war *Warrior) SecondSkill(hero Hero) string {
+	var str string
 	if war.Rage < 20 {
-		fmt.Println("You're not angry enough! Be angrier!!!Arrrr")
-		return
+		return "You're not angry enough! Be angrier!!!Arrrr"
 	}
-	fmt.Println("You take out the peasant pitchfork that you stole from your father on the farm and rush with it to the enemy, imagining that you are a Warsong")
+	str = "You take out the peasant pitchfork that you stole from your father on the farm and rush with it to the enemy, imagining that you are a Warsong "
 	war.Power += 3
 	war.Rage -= 20
 	var damage int
@@ -100,8 +106,8 @@ func (war *Warrior) SecondSkill(hero Hero) {
 		hero.setHealth(damage)
 		hero.setDefense(damage)
 	}
-	fmt.Println("You have dealt ", damage, " damage")
-
+	str += "You have dealt " + strconv.Itoa(damage) + " damage"
+	return str
 }
 func (war *Warrior) Health() int {
 	return war.Healths
@@ -128,7 +134,8 @@ func (war *Warrior) getID() int {
 func (war *Warrior) getName() string {
 	return war.Name
 }
-func (mag *Mage) Attack(hero Hero) {
+
+func (mag *Mage) Attack(hero Hero) string {
 	mag.Mana += 3
 	var damage int
 	if mag.Power+7+rand.Intn(8)-hero.amountDefense() <= 0 {
@@ -140,19 +147,22 @@ func (mag *Mage) Attack(hero Hero) {
 		hero.setHealth(damage)
 		hero.setDefense(damage)
 	}
-	fmt.Println("You have dealt ", damage, " damage")
-
+	//fmt.Println("You have dealt ", damage, " damage")
+	return "You have dealt " + strconv.Itoa(damage) + " damage"
 }
-func (mag *Mage) Defend() {
+func (mag *Mage) Defend() string {
+	var defense int
 	mag.Mana += 12
-	mag.Defense = mag.Defense + (13 + rand.Intn(14))
+	defense = 13 + rand.Intn(14)
+	mag.Defense = mag.Defense + defense
+	return "Your protection has been increased by" + strconv.Itoa(defense)
 }
-func (mag *Mage) FirstSkill(hero Hero) {
+func (mag *Mage) FirstSkill(hero Hero) string {
+	var str string
 	if mag.Mana < 10 {
-		fmt.Println("You have too little mana. Draw it harder!")
-		return
+		return "You have too little mana. Draw it harder!"
 	}
-	fmt.Println("You turn the enemy into the animal that he is most afraid of. And what is your surprise when the enemy became a sheep.The enemy is stunned.")
+	str = "You turn the enemy into the animal that he is most afraid of. And what is your surprise when the enemy became a sheep.The enemy is stunned. "
 	mag.Power += 4
 	mag.Mana -= 10
 	var damage int
@@ -166,15 +176,15 @@ func (mag *Mage) FirstSkill(hero Hero) {
 		hero.setDefense(damage)
 	}
 
-	fmt.Println("You have dealt ", damage, " damage")
-
+	str += "You have dealt " + strconv.Itoa(damage) + " damage"
+	return str
 }
-func (mag *Mage) SecondSkill(hero Hero) {
+func (mag *Mage) SecondSkill(hero Hero) string {
+	var str string
 	if mag.Mana < 20 {
-		fmt.Println("You have too little mana. Draw it harder!")
-		return
+		return "You have too little mana. Draw it harder!"
 	}
-	fmt.Println("YYou summon a huge fireball as if you are from the Uchiha clan and throw it at the enemy")
+	str = "YYou summon a huge fireball as if you are from the Uchiha clan and throw it at the enemy"
 	mag.Mana -= 20
 	mag.Power += 3
 	var damage int
@@ -187,7 +197,8 @@ func (mag *Mage) SecondSkill(hero Hero) {
 		hero.setHealth(damage)
 		hero.setDefense(damage)
 	}
-	fmt.Println("You have dealt ", damage, " damage")
+	str += "You have dealt " + strconv.Itoa(damage) + " damage"
+	return str
 }
 func (mag *Mage) Health() int {
 	return mag.Healths
@@ -214,7 +225,7 @@ func (mag *Mage) getID() int {
 func (mag *Mage) getName() string {
 	return mag.Name
 }
-func (hun *Hunter) Attack(hero Hero) {
+func (hun *Hunter) Attack(hero Hero) string {
 	hun.Energy += 12
 	var damage int
 	if hun.Power+(11+rand.Intn(12))-hero.amountDefense() <= 0 {
@@ -226,19 +237,22 @@ func (hun *Hunter) Attack(hero Hero) {
 		hero.setHealth(damage)
 		hero.setDefense(damage)
 	}
-	fmt.Println("You have dealt ", damage, " damage")
-
+	//fmt.Println("You have dealt ", damage, " damage")
+	return "You have dealt " + strconv.Itoa(damage) + " damage"
 }
-func (hun *Hunter) Defend() {
+func (hun *Hunter) Defend() string {
+	var defense int
 	hun.Energy += 7
-	hun.Defense += 10 + rand.Intn(11)
+	defense = 10 + rand.Intn(11)
+	hun.Defense += defense
+	return "Your protection has been increased by" + strconv.Itoa(defense)
 }
-func (hun *Hunter) FirstSkill(hero Hero) {
+func (hun *Hunter) FirstSkill(hero Hero) string {
+	var str string
 	if hun.Energy < 10 {
-		fmt.Println("You have too little Energy, you need to pet some animal urgently")
-		return
+		return "You have too little Energy, you need to pet some animal urgently"
 	}
-	fmt.Println("You send your pet to walk between the enemy's legs and rub against them.You stunned him.")
+	str = "You send your pet to walk between the enemy's legs and rub against them.You stunned him. "
 	hun.Power += 2
 	hun.Energy -= 10
 	var damage int
@@ -251,14 +265,15 @@ func (hun *Hunter) FirstSkill(hero Hero) {
 		hero.setHealth(damage)
 		hero.setDefense(damage)
 	}
-	fmt.Println("You have dealt ", damage, " damage")
+	str += "You have dealt " + strconv.Itoa(damage) + " damage"
+	return str
 }
-func (hun *Hunter) SecondSkill(hero Hero) {
+func (hun *Hunter) SecondSkill(hero Hero) string {
+	var str string
 	if hun.Energy < 20 {
-		fmt.Println("You have too little Energy, you need to pet some animal urgently")
-		return
+		return "You have too little Energy, you need to pet some animal urgently"
 	}
-	fmt.Println("You imagine that you are a Rexar, and your cat is a bear. And gather all your strength in this shot!")
+	str = "You imagine that you are a Rexar, and your cat is a bear. And gather all your strength in this shot! "
 	hun.Energy -= 20
 	hun.Power += 3
 	var damage int
@@ -271,7 +286,8 @@ func (hun *Hunter) SecondSkill(hero Hero) {
 		hero.setHealth(damage)
 		hero.setDefense(damage)
 	}
-	fmt.Println("You have dealt ", damage, " damage")
+	str += "You have dealt " + strconv.Itoa(damage) + " damage"
+	return str
 }
 func (hun *Hunter) Health() int {
 	return hun.Healths
@@ -295,7 +311,6 @@ func (hun *Hunter) setDefense(point int) {
 func (hun *Hunter) getID() int {
 	return hun.Id
 }
-
 func (hun *Hunter) getName() string {
 	return hun.Name
 }
