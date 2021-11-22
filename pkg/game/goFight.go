@@ -21,6 +21,7 @@ func Run32() string {
 	for len(heroes) != 1 {
 		go ToFight(&heroes, c0, c1)
 		go MakeFight(&heroes, &resultStr, c0, c1)
+		time.Sleep(time.Millisecond)
 	}
 	//fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
 	resultStr = resultStr + "IN THIS FIGHT, " + string(heroes[0].getName()) + " WON!!!"
@@ -63,22 +64,16 @@ func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
 	if len(*heroes) == 0 || len(*heroes) == 1 {
 		return
 	}
-	if len(*heroes) == 2 {
-		downstream <- (*heroes)[0]
-		downstream2 <- (*heroes)[1]
-		remove(heroes, 0)
-		remove(heroes, 1)
-		return
-	}
+
 	first := 0 + rand.Intn(len(*heroes))
-	if first < len(*heroes) {
+	if first <= len(*heroes) {
 		downstream <- (*heroes)[first]
 		remove(heroes, first)
 	} else {
 		return
 	}
 	second := 0 + rand.Intn(len(*heroes))
-	if second < len(*heroes) {
+	if second <= len(*heroes) {
 		downstream2 <- (*heroes)[second]
 		remove(heroes, second)
 	} else {
