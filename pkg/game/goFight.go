@@ -7,9 +7,9 @@ import (
 )
 
 func remove(s *[]Hero, i int) []Hero {
-	//(*s)[i] = (*s)[len(*s)-1]
-	//*s = (*s)[:len(*s)-1]
-	return append((*s)[:i], (*s)[i+1:]...)
+	(*s)[i] = (*s)[len(*s)-1]
+	*s = (*s)[:len(*s)-1]
+	return *s
 }
 func Run32() string {
 	heroes := make([]Hero, 32)
@@ -20,10 +20,12 @@ func Run32() string {
 	c0 := make(chan Hero)
 	c1 := make(chan Hero)
 
+	//var wg sync.WaitGroup
+
 	for len(heroes) != 1 {
 		go ToFight(&heroes, c0, c1)
 		go MakeFight(&heroes, c0, c1)
-		time.Sleep(time.Millisecond)
+		//time.Sleep(time.Millisecond)
 	}
 	//fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
 	resultStr = resultStr + "IN THIS FIGHT, " + string(heroes[0].getName()) + " WON!!!"
