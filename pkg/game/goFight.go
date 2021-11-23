@@ -64,25 +64,28 @@ func Run128() string {
 	resultStr = resultStr + "IN THIS FIGHT, " + string(heroes[0].getName()) + " WON!!!"
 	return resultStr
 }
+
 func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
 	if len(*heroes) == 0 || len(*heroes) == 1 {
 		return
 	}
 
 	first := 0 + rand.Intn(len(*heroes))
-	if first <= len(*heroes) {
-		downstream <- (*heroes)[first]
-		remove(heroes, first)
-	} else {
-		return
-	}
 	second := 0 + rand.Intn(len(*heroes))
-	if second <= len(*heroes) {
+	if first <= len(*heroes) && second <= len(*heroes) {
+		downstream <- (*heroes)[first]
 		downstream2 <- (*heroes)[second]
+		remove(heroes, first)
 		remove(heroes, second)
 	} else {
 		return
 	}
+	//if second <= len(*heroes) {
+	//	downstream2 <- (*heroes)[second]
+	//	remove(heroes, second)
+	//} else {
+	//	return
+	//}
 }
 
 func MakeFight(heroes *[]Hero, upstream, upstream2 chan Hero) {
