@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func CreateRandomHeroes32(heroes *map[int]Hero) {
+func CreateRandomHeroes32(heroes *[]Hero) {
 	rand.Seed(time.Now().UnixNano())
 	warriors := 6 + rand.Intn(9)
 	mages := 6 + rand.Intn(9)

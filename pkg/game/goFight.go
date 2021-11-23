@@ -3,6 +3,7 @@ package game
 import (
 	"fmt"
 	"math/rand"
+	"sync"
 	"time"
 )
 
@@ -12,24 +13,25 @@ func remove(s *[]Hero, i int) []Hero {
 	return *s
 }
 func Run32() string {
-	//heroes := make([]Hero, 32)
-	heroe := make(map[int]Hero)
+	heroes := make([]Hero, 32)
 	var resultStr string
 	rand.Seed(time.Now().UnixNano())
-	//CreateRandomHeroes32(&heroes)
-	CreateRandomHeroes32(&heroe)
+	CreateRandomHeroes32(&heroes)
+
 	c0 := make(chan Hero)
 	c1 := make(chan Hero)
 
-	//var wg sync.WaitGroup
+	var wg sync.WaitGroup
 
-	for len(heroe) != 1 {
-		go ToFight(&heroe, c0, c1)
-		go MakeFight(&heroe, c0, c1)
+	for len(heroes) != 1 {
+		go ToFight(&heroes, c0, c1)
+		wg.Add(1)
+		go MakeFight(&heroes, &wg, c0, c1)
 		//time.Sleep(time.Millisecond)
 	}
+	wg.Wait()
 	//fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
-	resultStr = resultStr + "IN THIS FIGHT, " + string(heroe[0].getName()) + " WON!!!"
+	resultStr = resultStr + "IN THIS FIGHT, " + string(heroes[0].getName()) + " WON!!!"
 	return resultStr
 }
 
@@ -56,10 +58,10 @@ func Run32() string {
 //	CreateRandomHeroes128(&heroes)
 //	c0 := make(chan Hero)
 //	c1 := make(chan Hero)
-//
+//	var wg sync.WaitGroup
 //	for len(heroes) != 1 {
 //		go ToFight(&heroes, c0, c1)
-//		go MakeFight(&heroes, c0, c1)
+//		go MakeFight(&heroes,&wg, c0, c1)
 //		time.Sleep(time.Millisecond)
 //	}
 //	//fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
@@ -67,7 +69,7 @@ func Run32() string {
 //	return resultStr
 //}
 
-func ToFight(heroes *map[int]Hero, downstream, downstream2 chan Hero) {
+func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
 	if len(*heroes) == 0 || len(*heroes) == 1 {
 		return
 	}
@@ -76,21 +78,20 @@ func ToFight(heroes *map[int]Hero, downstream, downstream2 chan Hero) {
 	second := 0 + rand.Intn(len(*heroes))
 	if first <= len(*heroes) && second <= len(*heroes) {
 		downstream <- (*heroes)[first]
-		//remove(heroes, first-1)
-		delete(*heroes, first)
+		remove(heroes, first-1)
 	} else {
 		return
 	}
 	if second <= len(*heroes) {
 		downstream2 <- (*heroes)[second]
-		delete(*heroes, second)
-		//remove(heroes, second-1)
+		remove(heroes, second-1)
 	} else {
 		return
 	}
 }
 
-func MakeFight(heroes *map[int]Hero, upstream, upstream2 chan Hero) {
+func MakeFight(heroes *[]Hero, wg *sync.WaitGroup, upstream, upstream2 chan Hero) {
+	defer wg.Done()
 	for v := range upstream {
 		for p := range upstream2 {
 			for {
@@ -111,8 +112,7 @@ func MakeFight(heroes *map[int]Hero, upstream, upstream2 chan Hero) {
 				if p.Health() <= 0 {
 					fmt.Println("In this battle winner ", v)
 					fmt.Println("lose ", p)
-					(*heroes)[len(*heroes)+1] = v
-					//*heroes = append(*heroes, v)
+					*heroes = append(*heroes, v)
 					return
 				}
 				if p.amountStamina() > 20 {
@@ -132,8 +132,7 @@ func MakeFight(heroes *map[int]Hero, upstream, upstream2 chan Hero) {
 				if v.Health() <= 0 {
 					fmt.Println("In this battle winner ", p)
 					fmt.Println("lose ", v)
-					(*heroes)[len(*heroes)+1] = p
-					// *heroes = append(*heroes, p)
+					*heroes = append(*heroes, p)
 					return
 				}
 			}
