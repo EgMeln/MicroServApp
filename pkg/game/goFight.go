@@ -20,8 +20,6 @@ func Run32() string {
 	c0 := make(chan Hero)
 	c1 := make(chan Hero)
 
-	//var wg sync.WaitGroup
-
 	for len(heroes) != 1 {
 		go ToFight(&heroes, c0, c1)
 		go MakeFight(&heroes, c0, c1)
@@ -75,8 +73,8 @@ func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
 	if first <= len(*heroes) && second <= len(*heroes) {
 		downstream <- (*heroes)[first]
 		downstream2 <- (*heroes)[second]
-		remove(heroes, first)
-		remove(heroes, second)
+		remove(heroes, first-1)
+		remove(heroes, second-1)
 	} else {
 		return
 	}
