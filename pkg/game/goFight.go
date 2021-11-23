@@ -3,7 +3,6 @@ package game
 import (
 	"fmt"
 	"math/rand"
-	"sync"
 	"time"
 )
 
@@ -21,16 +20,11 @@ func Run32() string {
 	c0 := make(chan Hero)
 	c1 := make(chan Hero)
 
-	var wg sync.WaitGroup
-
 	for len(heroes) != 1 {
-		go ToFightFirst(&heroes, c0)
-		go ToFightSecond(&heroes, c1)
-		wg.Add(1)
-		go MakeFight(&heroes, &wg, c0, c1)
-		//time.Sleep(time.Millisecond)
+		go ToFight(&heroes, c0, c1)
+		go MakeFight(&heroes, c0, c1)
+		time.Sleep(time.Millisecond)
 	}
-	wg.Wait()
 	//fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
 	resultStr = resultStr + "IN THIS FIGHT, " + string(heroes[0].getName()) + " WON!!!"
 	return resultStr
@@ -70,7 +64,7 @@ func Run32() string {
 //	return resultStr
 //}
 
-func ToFightFirst(heroes *[]Hero, downstream chan Hero) {
+func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
 	first := 0 + rand.Intn(len(*heroes))
 	if first < len(*heroes) && (len(*heroes) != 1 || len(*heroes) != 0) {
 		downstream <- (*heroes)[first]
@@ -78,9 +72,6 @@ func ToFightFirst(heroes *[]Hero, downstream chan Hero) {
 	} else {
 		return
 	}
-}
-
-func ToFightSecond(heroes *[]Hero, downstream2 chan Hero) {
 	second := 0 + rand.Intn(len(*heroes))
 	if second < len(*heroes) && (len(*heroes) != 1 || len(*heroes) != 0) {
 		downstream2 <- (*heroes)[second]
@@ -89,8 +80,8 @@ func ToFightSecond(heroes *[]Hero, downstream2 chan Hero) {
 		return
 	}
 }
-func MakeFight(heroes *[]Hero, wg *sync.WaitGroup, upstream, upstream2 chan Hero) {
-	defer wg.Done()
+
+func MakeFight(heroes *[]Hero, upstream, upstream2 chan Hero) {
 	for v := range upstream {
 		for p := range upstream2 {
 			for {
