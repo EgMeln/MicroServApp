@@ -24,7 +24,8 @@ func Run32() string {
 	var wg sync.WaitGroup
 
 	for len(heroes) != 1 {
-		go ToFight(&heroes, c0, c1)
+		go ToFightFirst(&heroes, c0)
+		go ToFightSecond(&heroes, c1)
 		wg.Add(1)
 		go MakeFight(&heroes, &wg, c0, c1)
 		//time.Sleep(time.Millisecond)
@@ -69,7 +70,7 @@ func Run32() string {
 //	return resultStr
 //}
 
-func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
+func ToFightFirst(heroes *[]Hero, downstream chan Hero) {
 	if len(*heroes) == 0 || len(*heroes) == 1 {
 		return
 	}
@@ -81,7 +82,12 @@ func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
 	} else {
 		return
 	}
+}
 
+func ToFightSecond(heroes *[]Hero, downstream2 chan Hero) {
+	if len(*heroes) == 0 || len(*heroes) == 1 {
+		return
+	}
 	second := 0 + rand.Intn(len(*heroes))
 	if second <= len(*heroes) {
 		downstream2 <- (*heroes)[second-1]
@@ -90,7 +96,6 @@ func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
 		return
 	}
 }
-
 func MakeFight(heroes *[]Hero, wg *sync.WaitGroup, upstream, upstream2 chan Hero) {
 	defer wg.Done()
 	for v := range upstream {
