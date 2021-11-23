@@ -72,9 +72,9 @@ func Run32() string {
 
 func ToFightFirst(heroes *[]Hero, downstream chan Hero) {
 	first := 0 + rand.Intn(len(*heroes))
-	if first <= len(*heroes) && (len(*heroes) != 1 || len(*heroes) != 0) {
-		downstream <- (*heroes)[first-1]
-		remove(heroes, first-1)
+	if first < len(*heroes) && (len(*heroes) != 1 || len(*heroes) != 0) {
+		downstream <- (*heroes)[first]
+		remove(heroes, first)
 	} else {
 		return
 	}
@@ -82,9 +82,9 @@ func ToFightFirst(heroes *[]Hero, downstream chan Hero) {
 
 func ToFightSecond(heroes *[]Hero, downstream2 chan Hero) {
 	second := 0 + rand.Intn(len(*heroes))
-	if second <= len(*heroes) && (len(*heroes) != 1 || len(*heroes) != 0) {
-		downstream2 <- (*heroes)[second-1]
-		remove(heroes, second-1)
+	if second < len(*heroes) && (len(*heroes) != 1 || len(*heroes) != 0) {
+		downstream2 <- (*heroes)[second]
+		remove(heroes, second)
 	} else {
 		return
 	}
