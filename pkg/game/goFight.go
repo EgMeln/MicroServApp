@@ -81,6 +81,7 @@ func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
 	} else {
 		return
 	}
+
 	second := 0 + rand.Intn(len(*heroes))
 	if second <= len(*heroes) {
 		downstream2 <- (*heroes)[second-1]
