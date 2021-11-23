@@ -58,6 +58,7 @@ func Run128() string {
 	for len(heroes) != 1 {
 		go ToFight(&heroes, c0, c1)
 		go MakeFight(&heroes, c0, c1)
+		time.Sleep(time.Millisecond)
 	}
 	//fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
 	resultStr = resultStr + "IN THIS FIGHT, " + string(heroes[0].getName()) + " WON!!!"
