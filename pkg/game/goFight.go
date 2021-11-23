@@ -13,17 +13,24 @@ func remove(s *[]Hero, i int) []Hero {
 }
 func Run32() string {
 	heroes := make([]Hero, 32)
+	roundHeroes := make([]Hero, 32)
 	var resultStr string
 	rand.Seed(time.Now().UnixNano())
 	CreateRandomHeroes32(&heroes)
 
 	c0 := make(chan Hero)
 	c1 := make(chan Hero)
-
+	c3 := make(chan Hero)
 	for len(heroes) != 1 {
-		go ToFight(&heroes, c0, c1)
-		go MakeFight(&heroes, c0, c1)
-		time.Sleep(time.Millisecond)
+		for i := 0; i < len(heroes)/2; i++ {
+			ToFight(&heroes, c0, c1)
+			go MakeFight(&heroes, c0, c1, c3)
+		}
+		for i := 0; i < len(heroes)/2; i++ {
+			roundHeroes = append(roundHeroes, <-c3)
+		}
+		//time.Sleep(time.Millisecond)
+		heroes = roundHeroes
 	}
 	//fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
 	resultStr = resultStr + "IN THIS FIGHT, " + string(heroes[0].getName()) + " WON!!!"
@@ -81,7 +88,7 @@ func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
 	}
 }
 
-func MakeFight(heroes *[]Hero, upstream, upstream2 chan Hero) {
+func MakeFight(heroes *[]Hero, upstream, upstream2, downstream chan Hero) {
 	for v := range upstream {
 		for p := range upstream2 {
 			for {
@@ -102,7 +109,8 @@ func MakeFight(heroes *[]Hero, upstream, upstream2 chan Hero) {
 				if p.Health() <= 0 {
 					fmt.Println("In this battle winner ", v)
 					fmt.Println("lose ", p)
-					*heroes = append(*heroes, v)
+					//*heroes = append(*heroes, v)
+					downstream <- v
 					return
 				}
 				if p.amountStamina() > 20 {
@@ -122,7 +130,8 @@ func MakeFight(heroes *[]Hero, upstream, upstream2 chan Hero) {
 				if v.Health() <= 0 {
 					fmt.Println("In this battle winner ", p)
 					fmt.Println("lose ", v)
-					*heroes = append(*heroes, p)
+					downstream <- p
+					//*heroes = append(*heroes, p)
 					return
 				}
 			}
