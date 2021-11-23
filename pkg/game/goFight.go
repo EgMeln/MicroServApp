@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 )
@@ -21,7 +22,7 @@ func Run32() string {
 
 	for len(heroes) != 1 {
 		go ToFight(&heroes, c0, c1)
-		go MakeFight(&heroes, &resultStr, c0, c1)
+		go MakeFight(&heroes, c0, c1)
 	}
 	//fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
 	resultStr = resultStr + "IN THIS FIGHT, " + string(heroes[0].getName()) + " WON!!!"
@@ -37,7 +38,7 @@ func Run64() string {
 
 	for len(heroes) != 1 {
 		go ToFight(&heroes, c0, c1)
-		go MakeFight(&heroes, &resultStr, c0, c1)
+		go MakeFight(&heroes, c0, c1)
 	}
 	//fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
 	resultStr = resultStr + "IN THIS FIGHT, " + string(heroes[0].getName()) + " WON!!!"
@@ -53,13 +54,12 @@ func Run128() string {
 
 	for len(heroes) != 1 {
 		go ToFight(&heroes, c0, c1)
-		go MakeFight(&heroes, &resultStr, c0, c1)
+		go MakeFight(&heroes, c0, c1)
 	}
 	//fmt.Println("IN THIS FIGHT, ", heroes[0], " WON!!!")
 	resultStr = resultStr + "IN THIS FIGHT, " + string(heroes[0].getName()) + " WON!!!"
 	return resultStr
 }
-
 func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
 	if len(*heroes) == 0 || len(*heroes) == 1 {
 		return
@@ -81,64 +81,47 @@ func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
 	}
 }
 
-func MakeFight(heroes *[]Hero, resultStr *string, upstream, upstream2 chan Hero) {
+func MakeFight(heroes *[]Hero, upstream, upstream2 chan Hero) {
 	for v := range upstream {
 		for p := range upstream2 {
-			*resultStr = *resultStr + "This battle between " + string(v.getName()) + " and " + string(p.getName()) + "\n"
 			for {
 				if v.amountStamina() > 20 {
 					v.SecondSkill(p)
-					*resultStr = v.SecondSkill(p) + "\n"
 				} else if v.amountStamina() > 10 {
 					v.FirstSkill(p)
-					*resultStr = v.FirstSkill(p) + "\n"
 				} else {
 					choose := 1 + rand.Intn(2)
 					if choose == 1 {
-						//fmt.Println(v, "Attack")
-						*resultStr = *resultStr + string(v.getName()) + " Attack\n"
+						fmt.Println(v, "Attack")
 						v.Attack(p)
-						*resultStr = v.Attack(p) + "\n"
 					} else {
-						//fmt.Println(v, "Defend")
-						*resultStr = *resultStr + string(v.getName()) + " Defend\n"
+						fmt.Println(v, "Defend")
 						v.Defend()
-						*resultStr = v.Defend() + "\n"
 					}
 				}
 				if p.Health() <= 0 {
-					//fmt.Println("In this battle winner ", v)
-					//fmt.Println("lose ", p)
-					*resultStr = *resultStr + "In this battle win " + string(v.getName()) + "\n"
-					*resultStr = *resultStr + "In this battle lose " + string(p.getName()) + "\n"
+					fmt.Println("In this battle winner ", v)
+					fmt.Println("lose ", p)
 					*heroes = append(*heroes, v)
 					return
 				}
 				if p.amountStamina() > 20 {
 					p.SecondSkill(v)
-					*resultStr = p.SecondSkill(v) + "\n"
 				} else if p.amountStamina() > 10 {
 					p.FirstSkill(v)
-					*resultStr = p.FirstSkill(v) + "\n"
 				} else {
 					choose := 1 + rand.Intn(2)
 					if choose == 1 {
-						//fmt.Println(p, "Attack")
-						*resultStr = *resultStr + string(p.getName()) + " Attack\n"
+						fmt.Println(p, "Attack")
 						p.Attack(v)
-						*resultStr = p.Attack(v) + "\n"
 					} else {
-						//fmt.Println(p, "Defend")
-						*resultStr = *resultStr + string(p.getName()) + " Defend\n"
+						fmt.Println(p, "Defend")
 						p.Defend()
-						*resultStr = p.Defend() + "\n"
 					}
 				}
 				if v.Health() <= 0 {
-					//fmt.Println("In this battle winner ", p)
-					//fmt.Println("lose ", v)
-					*resultStr = *resultStr + " In this battle win " + string(p.getName()) + "\n"
-					*resultStr = *resultStr + " In this battle win " + string(v.getName()) + "\n"
+					fmt.Println("In this battle winner ", p)
+					fmt.Println("lose ", v)
 					*heroes = append(*heroes, p)
 					return
 				}
@@ -146,3 +129,90 @@ func MakeFight(heroes *[]Hero, resultStr *string, upstream, upstream2 chan Hero)
 		}
 	}
 }
+
+//func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
+//	if len(*heroes) == 0 || len(*heroes) == 1 {
+//		return
+//	}
+//
+//	first := 0 + rand.Intn(len(*heroes))
+//	if first <= len(*heroes) {
+//		downstream <- (*heroes)[first]
+//		remove(heroes, first)
+//	} else {
+//		return
+//	}
+//	second := 0 + rand.Intn(len(*heroes))
+//	if second <= len(*heroes) {
+//		downstream2 <- (*heroes)[second]
+//		remove(heroes, second)
+//	} else {
+//		return
+//	}
+//}
+//
+//func MakeFight(heroes *[]Hero, resultStr *string, upstream, upstream2 chan Hero) {
+//	for v := range upstream {
+//		for p := range upstream2 {
+//			*resultStr = *resultStr + "This battle between " + string(v.getName()) + " and " + string(p.getName()) + "\n"
+//			for {
+//				if v.amountStamina() > 20 {
+//					v.SecondSkill(p)
+//					*resultStr = v.SecondSkill(p) + "\n"
+//				} else if v.amountStamina() > 10 {
+//					v.FirstSkill(p)
+//					*resultStr = v.FirstSkill(p) + "\n"
+//				} else {
+//					choose := 1 + rand.Intn(2)
+//					if choose == 1 {
+//						//fmt.Println(v, "Attack")
+//						*resultStr = *resultStr + string(v.getName()) + " Attack\n"
+//						v.Attack(p)
+//						*resultStr = v.Attack(p) + "\n"
+//					} else {
+//						//fmt.Println(v, "Defend")
+//						*resultStr = *resultStr + string(v.getName()) + " Defend\n"
+//						v.Defend()
+//						*resultStr = v.Defend() + "\n"
+//					}
+//				}
+//				if p.Health() <= 0 {
+//					//fmt.Println("In this battle winner ", v)
+//					//fmt.Println("lose ", p)
+//					*resultStr = *resultStr + "In this battle win " + string(v.getName()) + "\n"
+//					*resultStr = *resultStr + "In this battle lose " + string(p.getName()) + "\n"
+//					*heroes = append(*heroes, v)
+//					return
+//				}
+//				if p.amountStamina() > 20 {
+//					p.SecondSkill(v)
+//					*resultStr = p.SecondSkill(v) + "\n"
+//				} else if p.amountStamina() > 10 {
+//					p.FirstSkill(v)
+//					*resultStr = p.FirstSkill(v) + "\n"
+//				} else {
+//					choose := 1 + rand.Intn(2)
+//					if choose == 1 {
+//						//fmt.Println(p, "Attack")
+//						*resultStr = *resultStr + string(p.getName()) + " Attack\n"
+//						p.Attack(v)
+//						*resultStr = p.Attack(v) + "\n"
+//					} else {
+//						//fmt.Println(p, "Defend")
+//						*resultStr = *resultStr + string(p.getName()) + " Defend\n"
+//						p.Defend()
+//						*resultStr = p.Defend() + "\n"
+//					}
+//				}
+//				if v.Health() <= 0 {
+//					//fmt.Println("In this battle winner ", p)
+//					//fmt.Println("lose ", v)
+//					*resultStr = *resultStr + " In this battle win " + string(p.getName()) + "\n"
+//					*resultStr = *resultStr + " In this battle win " + string(v.getName()) + "\n"
+//					*heroes = append(*heroes, p)
+//					return
+//				}
+//			}
+//		}
+//	}
+//}
