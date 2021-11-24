@@ -16,15 +16,15 @@ func Run32() string {
 	roundHeroes := make([]Hero, 32)
 	var resultStr string
 	rand.Seed(time.Now().UnixNano())
-	CreateRandomHeroes32(&heroes)
+	CreateRandomHeroes(&heroes)
 
 	c0 := make(chan Hero)
 	c1 := make(chan Hero)
 	c3 := make(chan Hero)
 	for len(heroes) != 1 {
 		for i := 0; i < len(heroes)/2; i++ {
-			go ToFight(&heroes, c0, c1)
-			go MakeFight(&heroes, c0, c1, c3)
+			go ToFight(i, &heroes, c0, c1)
+			go MakeFight(c0, c1, c3)
 		}
 		for i := 0; i < len(heroes)/2; i++ {
 			roundHeroes = append(roundHeroes, <-c3)
@@ -71,24 +71,24 @@ func Run32() string {
 //	return resultStr
 //}
 
-func ToFight(heroes *[]Hero, downstream, downstream2 chan Hero) {
-	first := 0 + rand.Intn(len(*heroes))
+func ToFight(i int, heroes *[]Hero, downstream, downstream2 chan Hero) {
+	first := 2 * i
 	if first < len(*heroes) && (len(*heroes) != 1 || len(*heroes) != 0) {
 		downstream <- (*heroes)[first]
-		remove(heroes, first)
+		//remove(heroes, first)
 	} else {
 		return
 	}
-	second := 0 + rand.Intn(len(*heroes))
+	second := 2*i + 1
 	if second < len(*heroes) && (len(*heroes) != 1 || len(*heroes) != 0) {
 		downstream2 <- (*heroes)[second]
-		remove(heroes, second)
+		//remove(heroes, second)
 	} else {
 		return
 	}
 }
 
-func MakeFight(heroes *[]Hero, upstream, upstream2, downstream chan Hero) {
+func MakeFight(upstream, upstream2, downstream chan Hero) {
 	for v := range upstream {
 		for p := range upstream2 {
 			for {
