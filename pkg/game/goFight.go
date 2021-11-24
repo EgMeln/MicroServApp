@@ -22,6 +22,7 @@ func Run32() string {
 	c1 := make(chan Hero)
 	c3 := make(chan Hero)
 	for len(heroes) != 1 {
+		roundHeroes = nil
 		for i := 0; i < len(heroes)/2; i++ {
 			go ToFight(i, &heroes, c0, c1)
 			go MakeFight(c0, c1, c3)
