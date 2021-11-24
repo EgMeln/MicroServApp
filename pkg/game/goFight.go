@@ -9,7 +9,7 @@ func createAndShowAllHeroes(heroes *[]Hero) string {
 	CreateRandomHeroes(heroes)
 	var str string
 	for _, v := range *heroes {
-		str = v.PrintListHeroes() + "\n"
+		str += v.PrintListHeroes() + "\n"
 	}
 	return str
 }
@@ -34,7 +34,7 @@ func Run32() string {
 		}
 		heroes = roundHeroes
 	}
-	resultStr = resultStr + "IN THIS FIGHT, " + heroes[0].getName() + " WON!!!"
+	resultStr += "IN THIS FIGHT, " + heroes[0].getName() + " WON!!!"
 	return resultStr
 }
 
@@ -43,7 +43,8 @@ func Run64() string {
 	roundHeroes := make([]Hero, 64)
 	var resultStr string
 	rand.Seed(time.Now().UnixNano())
-	CreateRandomHeroes(&heroes)
+	//CreateRandomHeroes(&heroes)
+	createAndShowAllHeroes(&heroes)
 	c0 := make(chan Hero)
 	c1 := make(chan Hero)
 	c3 := make(chan Hero)
@@ -66,7 +67,8 @@ func Run128() string {
 	roundHeroes := make([]Hero, 128)
 	var resultStr string
 	rand.Seed(time.Now().UnixNano())
-	CreateRandomHeroes(&heroes)
+	//CreateRandomHeroes(&heroes)
+	createAndShowAllHeroes(&heroes)
 	c0 := make(chan Hero)
 	c1 := make(chan Hero)
 	c3 := make(chan Hero)
@@ -106,17 +108,17 @@ func MakeFight(resultStr *string, upstream, upstream2, downstream chan Hero) {
 			*resultStr = *resultStr + "This battle between " + v.getName() + " and " + p.getName() + "\n"
 			for {
 				if v.amountStamina() > 20 {
-					*resultStr = v.SecondSkill(p) + "\n"
+					*resultStr += v.SecondSkill(p) + "\n"
 				} else if v.amountStamina() > 10 {
-					*resultStr = v.FirstSkill(p) + "\n"
+					*resultStr += v.FirstSkill(p) + "\n"
 				} else {
 					choose := 1 + rand.Intn(2)
 					if choose == 1 {
 						*resultStr = *resultStr + v.getName() + " Attack\n"
-						*resultStr = v.Attack(p) + "\n"
+						*resultStr += v.Attack(p) + "\n"
 					} else {
 						*resultStr = *resultStr + v.getName() + " Defend\n"
-						*resultStr = v.Defend() + "\n"
+						*resultStr += v.Defend() + "\n"
 					}
 				}
 				if p.Health() <= 0 {
@@ -126,22 +128,22 @@ func MakeFight(resultStr *string, upstream, upstream2, downstream chan Hero) {
 					return
 				}
 				if p.amountStamina() > 20 {
-					*resultStr = p.SecondSkill(v) + "\n"
+					*resultStr += p.SecondSkill(v) + "\n"
 				} else if p.amountStamina() > 10 {
-					*resultStr = p.FirstSkill(v) + "\n"
+					*resultStr += p.FirstSkill(v) + "\n"
 				} else {
 					choose := 1 + rand.Intn(2)
 					if choose == 1 {
 						*resultStr = *resultStr + p.getName() + " Attack\n"
-						*resultStr = p.Attack(v) + "\n"
+						*resultStr += p.Attack(v) + "\n"
 					} else {
 						*resultStr = *resultStr + p.getName() + " Defend\n"
-						*resultStr = p.Defend() + "\n"
+						*resultStr += p.Defend() + "\n"
 					}
 				}
 				if v.Health() <= 0 {
 					*resultStr = *resultStr + " In this battle win " + p.getName() + "\n"
-					*resultStr = *resultStr + " In this battle win " + v.getName() + "\n"
+					*resultStr = *resultStr + " In this battle lose " + v.getName() + "\n"
 					downstream <- p
 					return
 				}
