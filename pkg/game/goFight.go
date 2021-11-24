@@ -19,7 +19,7 @@ func Run32() string {
 	var resultStr string
 	rand.Seed(time.Now().UnixNano())
 	//CreateRandomHeroes(&heroes)
-	createAndShowAllHeroes(&heroes)
+	resultStr = createAndShowAllHeroes(&heroes)
 	c0 := make(chan Hero)
 	c1 := make(chan Hero)
 	c3 := make(chan Hero)
@@ -44,7 +44,7 @@ func Run64() string {
 	var resultStr string
 	rand.Seed(time.Now().UnixNano())
 	//CreateRandomHeroes(&heroes)
-	createAndShowAllHeroes(&heroes)
+	resultStr = createAndShowAllHeroes(&heroes)
 	c0 := make(chan Hero)
 	c1 := make(chan Hero)
 	c3 := make(chan Hero)
@@ -68,7 +68,7 @@ func Run128() string {
 	var resultStr string
 	rand.Seed(time.Now().UnixNano())
 	//CreateRandomHeroes(&heroes)
-	createAndShowAllHeroes(&heroes)
+	resultStr = createAndShowAllHeroes(&heroes)
 	c0 := make(chan Hero)
 	c1 := make(chan Hero)
 	c3 := make(chan Hero)
