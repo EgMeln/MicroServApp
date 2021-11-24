@@ -17,31 +17,35 @@ type Hero interface {
 	amountDefense() int
 	getID() int
 	getName() string
+	PrintListHeroes() string
 }
 
 type Warrior struct {
-	Id      int
-	Name    string
-	Healths int
-	Power   int
-	Defense int
-	Rage    int
+	Id       int
+	Name     string
+	UnitType string
+	Healths  int
+	Power    int
+	Defense  int
+	Rage     int
 }
 type Mage struct {
-	Id      int
-	Name    string
-	Healths int
-	Power   int
-	Defense int
-	Mana    int
+	Id       int
+	Name     string
+	UnitType string
+	Healths  int
+	Power    int
+	Defense  int
+	Mana     int
 }
 type Hunter struct {
-	Id      int
-	Name    string
-	Healths int
-	Power   int
-	Defense int
-	Energy  int
+	Id       int
+	Name     string
+	UnitType string
+	Healths  int
+	Power    int
+	Defense  int
+	Energy   int
 }
 
 func (war *Warrior) Attack(hero Hero) string {
@@ -56,7 +60,6 @@ func (war *Warrior) Attack(hero Hero) string {
 		hero.setHealth(damage)
 		hero.setDefense(damage)
 	}
-	//fmt.Println("You have dealt ", damage, " damage")
 	return "You have dealt " + strconv.Itoa(damage) + " damage"
 }
 func (war *Warrior) Defend() string {
@@ -134,7 +137,9 @@ func (war *Warrior) getID() int {
 func (war *Warrior) getName() string {
 	return war.Name
 }
-
+func (war *Warrior) PrintListHeroes() string {
+	return "Heroes " + war.Name + " with class " + war.UnitType + ". Health " + strconv.Itoa(war.Healths) + ".Power " + strconv.Itoa(war.Power) + ".Defense" + strconv.Itoa(war.Defense) + ".Rage " + strconv.Itoa(war.Rage)
+}
 func (mag *Mage) Attack(hero Hero) string {
 	mag.Mana += 3
 	var damage int
@@ -225,6 +230,9 @@ func (mag *Mage) getID() int {
 func (mag *Mage) getName() string {
 	return mag.Name
 }
+func (mag *Mage) PrintListHeroes() string {
+	return "Heroes " + mag.Name + " with class " + mag.UnitType + ". Health " + strconv.Itoa(mag.Healths) + ".Power " + strconv.Itoa(mag.Power) + ".Defense" + strconv.Itoa(mag.Defense) + ".Mana " + strconv.Itoa(mag.Mana)
+}
 func (hun *Hunter) Attack(hero Hero) string {
 	hun.Energy += 12
 	var damage int
@@ -313,4 +321,7 @@ func (hun *Hunter) getID() int {
 }
 func (hun *Hunter) getName() string {
 	return hun.Name
+}
+func (hun *Hunter) PrintListHeroes() string {
+	return "Heroes " + hun.Name + " with class " + hun.UnitType + ". Health " + strconv.Itoa(hun.Healths) + ".Power " + strconv.Itoa(hun.Power) + ".Defense" + strconv.Itoa(hun.Defense) + ".Energy " + strconv.Itoa(hun.Energy)
 }
